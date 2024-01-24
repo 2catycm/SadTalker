@@ -81,6 +81,7 @@ class SadTalkerGUI:
                                 value=2,
                             )
                             enhancer = gr.Checkbox(label="GFPGAN as Face enhancer")
+                            half = gr.Checkbox(label="Use half precision")
                             submit = gr.Button(
                                 "Generate",
                                 elem_id="sadtalker_generate",
@@ -103,6 +104,7 @@ class SadTalkerGUI:
                     preprocess_type,
                     is_still_mode,
                     enhancer,
+                    half,
                     batch_size,
                     size_of_image,
                     pose_style,
@@ -118,6 +120,7 @@ class SadTalkerGUI:
                     preprocess_type,
                     is_still_mode,
                     enhancer,
+                    half,
                     batch_size,
                     size_of_image,
                     pose_style,
