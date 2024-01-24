@@ -121,6 +121,7 @@ def make_tts_ui(output_audio_gr):
          clean_ref_gr, auto_det_lang_gr, tos_gr],
         outputs=[output_audio_gr],
     )
+    return input_text_gr
 
     # with gr.Column():
     #     video_gr = gr.Video(label="Waveform Visual")
