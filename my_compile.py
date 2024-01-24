@@ -14,12 +14,14 @@ import torch.onnx
 
 
 
-
+import os
+os.add_dll_directory(r'D:\ProgramFiles\NVIDIA\cuda\lib\x64')
 import onnxruntime as ort
 
 # https://zhuanlan.zhihu.com/p/422290231#:~:text=%E5%9C%A8pytorch%E4%B8%AD%E8%BD%AC%E6%8D%A2%E4%B8%BAonnx%E7%9A%84%E6%A8%A1%E5%9E%8B%EF%BC%8C%E5%B0%B1%E4%B8%80%E8%A1%8C%E4%BB%A3%E7%A0%81%EF%BC%9A%20torch.onnx.export%28model%2C%20args%2C%20f%2C%20export_params%3DTrue%2C%20verbose%3DFalse%2C%20input_names%3DNone%2C,output_names%3DNone%2Cdo_constant_folding%3DTrue%2Cdynamic_axes%3DNone%2Copset_version%3D9%29%20%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0%EF%BC%9A%201.model%3Atorch.nn.model%20%E8%A6%81%E5%AF%BC%E5%87%BA%E7%9A%84%E6%A8%A1%E5%9E%8B%202.args%3Atuple%20or%20tensor%20%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%BE%93%E5%85%A5%E5%8F%82%E6%95%B0%E3%80%82
 
 import tempfile
+import inspect
 
 
 class TorchCompile(nn.Module):
@@ -99,8 +101,10 @@ class TorchCompile(nn.Module):
             print(f'due to "{e}", we skip onnx optimize.')
 
         self.session = ort.InferenceSession(
-            self.file_path, providers=["CUDAExecutionProvider"]
+            self.file_path, providers=["TensorrtExecutionProvider", 
+                                       "CUDAExecutionProvider"]
         )
+        print(self.session.get_providers())
         if self.verbose:
             for var in self.session.get_inputs():
                 print(
@@ -197,3 +201,18 @@ async def test_async():
     print(res4)
 
 
+def test_many_args():
+    class Add(nn.Module):
+        def __init__(self):
+            super(Add, self).__init__()
+            self.weight = nn.Parameter(torch.rand(1).float()).float()
+
+        def forward(self, x: torch.FloatTensor, y: torch.FloatTensor, *args, **kwargs):
+            return x + y + self.weight
+    sig = inspect.signature(Add.forward)
+    params = sig.parameters
+
+    for name, param in params.items():
+        print(f"Parameter name: {name}")
+        print(f"Default value: {param.default if param.default is not param.empty else 'No default value'}")
+        print(f"Annotation: {param.annotation if param.annotation is not param.empty else 'No annotation'}")
