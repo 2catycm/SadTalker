@@ -72,6 +72,7 @@ class Audio2Coeff():
         self.device = device
 
     def generate(self, batch, coeff_save_dir, pose_style, ref_pose_coeff_path=None):
+    # async def generate(self, batch, coeff_save_dir, pose_style, ref_pose_coeff_path=None):
 
         with torch.no_grad():
             #test

@@ -114,6 +114,7 @@ def make_animation(source_image, source_semantics, target_semantics,
             # still check the dimension
             # print(target_semantics.shape, source_semantics.shape)
             target_semantics_frame = target_semantics[:, frame_idx]
+            
             he_driving = mapping(target_semantics_frame)
             if yaw_c_seq is not None:
                 he_driving['yaw_in'] = yaw_c_seq[:, frame_idx]
@@ -121,6 +122,7 @@ def make_animation(source_image, source_semantics, target_semantics,
                 he_driving['pitch_in'] = pitch_c_seq[:, frame_idx] 
             if roll_c_seq is not None:
                 he_driving['roll_in'] = roll_c_seq[:, frame_idx] 
+            
             
             kp_driving = keypoint_transformation(kp_canonical, he_driving)
                 

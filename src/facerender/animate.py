@@ -30,6 +30,8 @@ try:
 except:
     in_webui = False
 
+from my_compile import TorchCompile
+
 class AnimateFromCoeff():
 
     def __init__(self, sadtalker_path, device):
@@ -39,6 +41,9 @@ class AnimateFromCoeff():
 
         generator = OcclusionAwareSPADEGenerator(**config['model_params']['generator_params'],
                                                     **config['model_params']['common_params'])
+        
+        
+        
         kp_extractor = KPDetector(**config['model_params']['kp_detector_params'],
                                     **config['model_params']['common_params'])
         he_estimator = HEEstimator(**config['model_params']['he_estimator_params'],
@@ -46,6 +51,8 @@ class AnimateFromCoeff():
         mapping = MappingNet(**config['model_params']['mapping_params'])
 
         generator.to(device)
+        
+        
         kp_extractor.to(device)
         he_estimator.to(device)
         mapping.to(device)
@@ -82,6 +89,10 @@ class AnimateFromCoeff():
         self.mapping.eval()
          
         self.device = device
+        
+        # print("尝试用Pytorch2.0编译generator")
+        # self.generator = TorchCompile(self.generator, "generator.onnx")
+        # generator = torch.compile(generator, mode='max-autotune')
     
     def load_cpk_facevid2vid_safetensor(self, checkpoint_path, generator=None, 
                         kp_detector=None, he_estimator=None,  
@@ -155,6 +166,7 @@ class AnimateFromCoeff():
         return checkpoint['epoch']
 
     def generate(self, x, video_save_dir, pic_path, crop_info, enhancer=None, background_enhancer=None, preprocess='crop', img_size=256):
+    # async def generate(self, x, video_save_dir, pic_path, crop_info, enhancer=None, background_enhancer=None, preprocess='crop', img_size=256):
 
         source_image=x['source_image'].type(torch.FloatTensor)
         source_semantics=x['source_semantics'].type(torch.FloatTensor)

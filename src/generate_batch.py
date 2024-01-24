@@ -49,6 +49,7 @@ def generate_blink_seq_randomly(num_frames):
     return ratio
 
 def get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, still=False, idlemode=False, length_of_audio=False, use_blink=True):
+# async def get_data(first_coeff_path, audio_path, device, ref_eyeblink_coeff_path, still=False, idlemode=False, length_of_audio=False, use_blink=True):
 
     syncnet_mel_step_size = 16
     fps = 25
